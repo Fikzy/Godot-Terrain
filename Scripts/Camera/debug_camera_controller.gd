@@ -21,28 +21,31 @@ func _ready() -> void:
 func get_input_direction() -> Vector3:
 	var direction = Vector3(0, 0, 0);
 
-	if Input.is_key_pressed(KEY_W): direction += Vector3.FORWARD;
-	if Input.is_key_pressed(KEY_S): direction += Vector3.BACK;
-	if Input.is_key_pressed(KEY_A): direction += Vector3.LEFT;
-	if Input.is_key_pressed(KEY_D): direction += Vector3.RIGHT;
-	if Input.is_key_pressed(KEY_Q): direction += Vector3.DOWN;
-	if Input.is_key_pressed(KEY_E): direction += Vector3.UP;
+	if Input.is_action_pressed("forward"): direction += Vector3.FORWARD;
+	if Input.is_action_pressed("backward"): direction += Vector3.BACK;
+	if Input.is_action_pressed("left"): direction += Vector3.LEFT;
+	if Input.is_action_pressed("right"): direction += Vector3.RIGHT;
+	if Input.is_action_pressed("down"): direction += Vector3.DOWN;
+	if Input.is_action_pressed("up"): direction += Vector3.UP;
 
 	return direction;
 
 # Called every frame. 'delta' is the elapsed time since the previous frame.
 func _process(delta: float) -> void:
 
-	if Input.is_mouse_button_pressed(MOUSE_BUTTON_RIGHT):
+	if Input.is_mouse_button_pressed(MOUSE_BUTTON_LEFT):
 		Input.set_mouse_mode(Input.MOUSE_MODE_CAPTURED)
 	else:
 		Input.set_mouse_mode(Input.MOUSE_MODE_VISIBLE)
 	
 
+	if Input.is_key_pressed(KEY_ESCAPE):
+		get_tree().quit()
+
 
 	var translation = get_input_direction();
 
-	if Input.is_key_pressed(KEY_SHIFT):
+	if Input.is_action_pressed("sprint"):
 		translation *= 10.0;
 
 	translation *= pow(2.0, boost);
@@ -63,7 +66,7 @@ func _input(event: InputEvent) -> void:
 			boost -= 0.2;
 
 	
-	if event is InputEventMouseMotion and Input.is_mouse_button_pressed(MOUSE_BUTTON_RIGHT):
+	if event is InputEventMouseMotion and Input.is_mouse_button_pressed(MOUSE_BUTTON_LEFT):
 		var mouse_movement = event.relative * get_process_delta_time()
 
 		target_camera_state.angles += Vector3(-mouse_movement.y, -mouse_movement.x, 0.0) * 0.25
